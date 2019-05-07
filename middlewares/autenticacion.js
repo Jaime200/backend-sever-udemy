@@ -14,11 +14,10 @@ let verificaToken = (req,res,next)=>{
                 mensaje: 'Token incorrecto',
                  errors: err
             })
-        }
-        req.
-        console.log(decoded)
-        req.usuario = decode.UsuarioBD;
-        next();
+        }        
+      
+       req.usuario = decoded.UsuarioBD;
+        return next();
     } )
 }
 

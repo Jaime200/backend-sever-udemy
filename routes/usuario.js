@@ -8,9 +8,13 @@ let Usuario  =  require('../models/usuario')
 
 /*Obtener todos los usuarios */
 app.get('/', (req,res, next)=>{
-
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+    console.log(desde)
     Usuario.find({}
         ,'nombre email img role')
+        .skip(desde)
+        .limit(5)
         .exec(
          (err, usuariosDB)=>{
         if(err){
@@ -20,11 +24,14 @@ app.get('/', (req,res, next)=>{
                 errors: err
             })
         }
-    
-        return res.status(200).json({
-            ok: true,
-            usuarios: usuariosDB
+        Usuario.count({},(err, conteo )=>{
+            return res.status(200).json({
+                ok: true,
+                total : conteo,
+                usuarios: usuariosDB
+            })
         })
+        
 
     }
     )//fin exec
@@ -85,7 +92,7 @@ app.put('/:id',[verificaToken],(req,res)=>{
 /*Crear un nuevo usuario */
 app.post('/',[verificaToken],(req,res) => {
     let body = req.body;
-    console.log(body)
+    
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,

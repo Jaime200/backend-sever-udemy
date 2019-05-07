@@ -15,6 +15,11 @@ app.use(bodyParser.json());
 let appRoutes = require('./routes/app')
 let applogin = require('./routes/login')
 let appUsuario = require('./routes/usuario')
+let appHospital = require('./routes/hospital')
+let appMedico = require('./routes/medico')
+let appBusqueda = require('./routes/busqueda')
+let appUpload = require('./routes/upload')
+let appImagenes = require('./routes/imagenes')
 
 //Conexion a la base de datos
 mongoose.connection.openUri(`mongodb://localhost:27017/hospitaldb`, (err)=>{
@@ -24,9 +29,21 @@ mongoose.connection.openUri(`mongodb://localhost:27017/hospitaldb`, (err)=>{
 
 } )
 
+// Server index config
+// let serveIndex = require('serve-index');
+// app.use(express.static(__dirname + '/'))
+// app.use('/uploads', serveIndex(__dirname + '/uploads'));
+
+
 //rutas
 app.use('/usuario',appUsuario)
 app.use('/login',applogin)
+app.use('/hospital',appHospital)
+app.use('/medico',appMedico)
+app.use('/busqueda',appBusqueda)
+app.use('/upload',appUpload)
+app.use('/img',appImagenes)
+//app.use('/medico',appMedico)
 app.use('/',appRoutes)
 
 
