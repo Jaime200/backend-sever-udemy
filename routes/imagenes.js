@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 let app = express();
 const path = require('path')
 const fs = require('fs')
+
+
 //rutas
 app.get('/:tipo/:img', (req,res, next)=>{
 
