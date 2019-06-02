@@ -53,8 +53,8 @@ app.get('/todo/collecion/:tabla/:busqueda',(req,res)=>{
         case 'medicos':
             promesa = busquedaMedicos(regex)
             break;
-        case 'hospitales':
-            promesa = busquedaMedicos(regex)
+        case 'hospitales':            
+            promesa = busquedaHospitales(regex)
                 break;
         default: return res.status(400).json({
             ok: false,
@@ -74,7 +74,7 @@ app.get('/todo/collecion/:tabla/:busqueda',(req,res)=>{
 })
 
 
- let busquedaHospitales = async (regex)=>{     
+ let busquedaHospitales = async (regex)=>{       
     return  await Hospital.find({nombre: regex})
                           .populate('usuario')
                           .exec()
@@ -90,8 +90,10 @@ app.get('/todo/collecion/:tabla/:busqueda',(req,res)=>{
                          .then(Medicos => Medicos)
                          .catch(err => {throw new Error(err) })    
  }
+
+ 
  let busquedaUsuarios = async (regex)=>{     
-     return await Usuario.find({}, 'nombre email role' ) 
+     return await Usuario.find({}, 'nombre email role img' ) 
                             .or([{'nombre': regex}, {'email': regex}])
                             .exec( )
                             .then(Usuarios => Usuarios)

@@ -14,9 +14,18 @@ let verificaToken = (req,res,next)=>{
                 mensaje: 'Token incorrecto',
                  errors: err
             })
+        }      
+        
+        if(decoded.UsuarioDB){
+            if(err){
+                return res.status(401).json({
+                    ok:false,
+                    mensaje: 'Error al obtener el token',
+                     errors: err
+                })
+            }  
         }        
-      
-       req.usuario = decoded.UsuarioBD;
+       req.usuario = decoded.usuarioDB;
         return next();
     } )
 }

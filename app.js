@@ -7,6 +7,14 @@ const bodyParser = require('body-parser')
 let app = express();
 let colorVerde = '\x1b[32m%s\x1b[0m'
 
+//CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
+    next();
+  });
+
 //bodyParser
 app.use(bodyParser.urlencoded({extend : false}));
 app.use(bodyParser.json());

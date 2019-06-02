@@ -12,7 +12,7 @@ app.get('/', (req,res, next)=>{
     desde = Number(desde);
     console.log(desde)
     Usuario.find({}
-        ,'nombre email img role')
+        ,'nombre email img role google')
         .skip(desde)
         .limit(5)
         .exec(
@@ -43,6 +43,7 @@ app.get('/', (req,res, next)=>{
 app.put('/:id',[verificaToken],(req,res)=>{
     
     let id = req.params.id
+    let token = req.query.token;
     let body = req.body
     Usuario.findById(id, (err,UsuarioDB)=>{
         if(err){
@@ -78,7 +79,8 @@ app.put('/:id',[verificaToken],(req,res)=>{
             return res.status(200).json({
                 ok:true,
                 mensaje:'El usuario se actualizó',
-                usuario: usuarioGuardado
+                UsuarioDB: usuarioGuardado,
+                token 
             })
         })
 
@@ -90,9 +92,9 @@ app.put('/:id',[verificaToken],(req,res)=>{
 
 
 /*Crear un nuevo usuario */
-app.post('/',[verificaToken],(req,res) => {
+app.post('/',(req,res) => {
     let body = req.body;
-    
+    let token = req.query.token;
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
@@ -113,7 +115,9 @@ app.post('/',[verificaToken],(req,res) => {
 
         return res.status(201).json({
             ok: true,
-            usuario: UsuarioDB 
+            mensaje:'El usuario ha sido creado',
+            UsuarioDB,
+            token 
         })
     })
     

@@ -113,10 +113,9 @@ app.put('/:tipo/:id', (req,res, next)=>{
                 return  res.status(200).json({
                                     ok: true,
                                     message:{
-                                        message: `imagen de ${tipo} actualizado`,
-                                        [tipo] :  registroActualizado
-                            
-                                    }
+                                        message: `imagen de ${tipo} actualizado`,                            
+                                    },
+                                    [tipo] :  registroActualizado
                 })
         })
 

@@ -20,7 +20,7 @@ const verify= async ( token ) => {
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
     const payload = ticket.getPayload();
- 
+    
     return {
         nombre : payload.name,
         email : payload.email,
@@ -68,7 +68,7 @@ const verify= async ( token ) => {
 app.post('/google',async (req,res)=>{
 
     let token = req.body.token
-
+    
     let googleUser = await verify(token)
                             .catch(err =>{
                                     return res.status(403).json({
@@ -85,7 +85,7 @@ app.post('/google',async (req,res)=>{
                                     errors: err
                                 })
                             });
-                        
+            
     if(usuarioDB){
         //verifica si el usuario se logueo normal
         if(usuarioDB.google===false){
@@ -95,11 +95,11 @@ app.post('/google',async (req,res)=>{
             })
         }
         else{ //si no se logueo por google
-            let token = jwt.sign({ UsuarioBD },SEED,{ expiresIn: 14400 })
-        
+            let token = jwt.sign({ usuarioDB },SEED,{ expiresIn: 14400 })
+            
             return res.status(200).json({
                 ok:true,
-                UsuarioBD,
+                UsuarioDB :  usuarioDB,
                 token: token
             })
         }        
@@ -123,7 +123,7 @@ app.post('/google',async (req,res)=>{
 app.post('/',(req,res) =>{
     let body = req.body
 
-   Usuario.findOne({email : body.email}, (err,UsuarioBD)=>{
+   Usuario.findOne({email : body.email}, (err,UsuarioDB)=>{
         if(err){
             return res.status(500).json({
                 ok: false,
@@ -132,7 +132,7 @@ app.post('/',(req,res) =>{
             })
         }
 
-        if(!UsuarioBD){
+        if(!UsuarioDB){
             return res.status(500).json({
                 ok: false,
                 mensaje: `Credenciales incorrectas - email` ,
@@ -141,7 +141,7 @@ app.post('/',(req,res) =>{
         }      
 
         
-        if( !bcrypt.compareSync(body.password, UsuarioBD.password)){
+        if( !bcrypt.compareSync(body.password, UsuarioDB.password)){
             return res.status(500).json({
                 ok: false,
                 mensaje: `Credenciales incorrectas - password` ,
@@ -150,12 +150,12 @@ app.post('/',(req,res) =>{
         }
 
         //Crear un token!!
-        UsuarioBD.password = ':)'
-        let token = jwt.sign({ UsuarioBD },SEED,{ expiresIn: 14400 })
+        UsuarioDB.password = ':)'
+        let token = jwt.sign({ UsuarioDB },SEED,{ expiresIn: 14400 })
         
         return res.status(200).json({
             ok:true,
-            UsuarioBD,
+            UsuarioDB,
             token: token
         })
     })
