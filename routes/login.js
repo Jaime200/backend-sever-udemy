@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const SEED =require('../config/config').SEED
+const { verificaToken } = require('../middlewares/autenticacion')
 let app = express();
 
 let Usuario  =  require('../models/usuario')
@@ -57,10 +58,25 @@ const verify= async ( token ) => {
             return res.status(200).json({
                 ok:true,
                 usuarioDB: usuarioGuardado,
-                token: token
+                token: token,
+                menu : obtenerMenu(usuarioGuardado.role)
             })
      })
  }
+
+//======================================
+//Renueva token
+//======================================
+app.get('/renuevaToken', [verificaToken] ,(req,res)=>{
+
+    console.log('Renueva token', req.usuario)
+    let token = jwt.sign({ usuarioDB: req.usuario },SEED,{ expiresIn: 14400 })
+    return res.status(200).json({
+        ok:true,
+        usuarioDB: req.usuario,
+        token : token
+    })
+})
 
 //======================================
 //autenticación google
@@ -100,7 +116,8 @@ app.post('/google',async (req,res)=>{
             return res.status(200).json({
                 ok:true,
                 UsuarioDB :  usuarioDB,
-                token: token
+                token: token,
+                menu : obtenerMenu(usuarioDB.role)
             })
         }        
     }
@@ -156,11 +173,44 @@ app.post('/',(req,res) =>{
         return res.status(200).json({
             ok:true,
             UsuarioDB,
-            token: token
+            token: token,
+            menu : obtenerMenu(UsuarioDB.role)
         })
     })
    
 })
+
+
+let obtenerMenu = (ROLE)=>{
+     menu =[
+        {
+          titulo : 'Principal',  
+          icono : 'mdi mdi-gauge',
+          submenu : [
+            { titulo : 'Dashboard', url: '/dashboard'},
+            { titulo : 'ProgressBar', url: '/progress'},
+            { titulo : 'Gráficas', url: '/graficas1'},
+            { titulo : 'Promesas', url: '/promesas'},
+            { titulo : 'Rxsj', url: '/rxjs'}
+          ]
+        },
+        {
+          titulo:'Mantenimiento',
+          icono: 'mdi mdi-folder-lock-open',
+          submenu:[
+            //{titulo:'Usuarios'  ,url:'/usuarios'},
+            {titulo:'Hospitales'  ,url:'/hospitales'},
+            {titulo:'Médicos'  ,url:'/medicos'}
+          ]
+        }
+      ];
+
+      if(ROLE ==='ADMIN_ROLE'){
+          menu[1].submenu.unshift({titulo:'Usuarios'  ,url:'/usuarios'})
+      }
+      
+      return menu;
+}
 
 
 module.exports = app

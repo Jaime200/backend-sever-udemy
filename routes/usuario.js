@@ -1,13 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcryptjs')
-const { verificaToken } = require('../middlewares/autenticacion')
+const { verificaToken, verificaADMIN_ROLE,verificaADMIN_ROLE_o_MismoID } = require('../middlewares/autenticacion')
 let app = express();
 let Usuario  =  require('../models/usuario')
 
 //rutas
 
 /*Obtener todos los usuarios */
-app.get('/', (req,res, next)=>{
+app.get('/', [verificaToken,verificaADMIN_ROLE],(req,res, next)=>{
+    console.log(req.query)
     let desde = req.query.desde || 0;
     desde = Number(desde);
     console.log(desde)
@@ -40,7 +41,7 @@ app.get('/', (req,res, next)=>{
 
 
 /*Actualizar un usuario */
-app.put('/:id',[verificaToken],(req,res)=>{
+app.put('/:id',[verificaToken,verificaADMIN_ROLE_o_MismoID],(req,res)=>{
     
     let id = req.params.id
     let token = req.query.token;
@@ -125,7 +126,7 @@ app.post('/',(req,res) => {
 })
 
 /*Eliminar un usuario */
-app.delete('/:id',[verificaToken],(req,res)=>{
+app.delete('/:id',[verificaToken, verificaADMIN_ROLE,verificaADMIN_ROLE_o_MismoID],(req,res)=>{
     let id = req.params.id 
     Usuario.findByIdAndRemove(id,(err,usuarioBorrado)=>{
         if(err){
